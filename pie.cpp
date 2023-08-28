@@ -9,104 +9,64 @@ using namespace std;
 class Pie 
 {
     public:
-		//The dimensions of the dot
-		static const int DOT_WIDTH = 32;
-		static const int DOT_HEIGHT = 32;
+		static const int WIDTH = 32;
+		static const int HEIGHT = 32;
 		static const int SCREEN_WIDTH = 320;
 		static const int SCREEN_HEIGHT = 240;
+    static const int GRAVITY_VELOCITY = 1;
+    static const int GRAVITY_MAX_SPEED = 6;
+		static const int VEL = 5;
 
-
-		//Maximum axis velocity of the dot
-		static const int DOT_VEL = 1;
-
-		//Initializes the variables
-		Pie();
-
-		//Takes key presses and adjusts the dot's velocity
+		Pie(int x, int y);
 		void handleEvent( SDL_Event& e );
-
-		//Moves the dot
 		void move();
-
     int Y();
     int X();
 
     private:
-		//The X and Y offsets of the dot
-		int mPosX, mPosY;
-
-		//The velocity of the dot
-		int mVelX, mVelY;
+		int pieX, pieY;
+		int velY;
 };
 
-Pie::Pie()
+Pie::Pie(int x, int y)
 {
-    //Initialize the offsets
-    mPosX = 0;
-    mPosY = 0;
+    pieY = y;
 
-    //Initialize the velocity
-    mVelX = 0;
-    mVelY = 0;
+    pieX = x;
 }
 
 void Pie::handleEvent( SDL_Event& e )
 {
-    //If a key was pressed
 	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
     {
-        //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: mVelY -= DOT_VEL; break;
-            case SDLK_DOWN: mVelY += DOT_VEL; break;
-            case SDLK_LEFT: mVelX -= DOT_VEL; break;
-            case SDLK_RIGHT: mVelX += DOT_VEL; break;
-        }
-    }
-    //If a key was released
-    else if( e.type == SDL_KEYUP && e.key.repeat == 0 )
-    {
-        //Adjust the velocity
-        switch( e.key.keysym.sym )
-        {
-            case SDLK_UP: mVelY += DOT_VEL; break;
-            case SDLK_DOWN: mVelY -= DOT_VEL; break;
-            case SDLK_LEFT: mVelX += DOT_VEL; break;
-            case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+            case SDLK_UP: velY -= VEL; break;
         }
     }
 }
 
 void Pie::move()
 {
-    //Move the dot left or right
-    mPosX += mVelX;
+  if (velY < GRAVITY_MAX_SPEED)
+  {
+    velY += GRAVITY_VELOCITY;
+  }
 
-    //If the dot went too far to the left or right
-    if( ( mPosX < 0 ) || ( mPosX + DOT_WIDTH > SCREEN_WIDTH ) )
-    {
-        //Move back
-        mPosX -= mVelX;
-    }
+  pieY += velY;
 
-    //Move the dot up or down
-    mPosY += mVelY;
-
-    //If the dot went too far up or down
-    if( ( mPosY < 0 ) || ( mPosY + DOT_HEIGHT > SCREEN_HEIGHT ) )
-    {
-        //Move back
-        mPosY -= mVelY;
-    }
+  if( ( pieY < 0 ) || (pieY + HEIGHT > SCREEN_HEIGHT ) )
+  {
+      pieY -= velY;
+  }
 }
 
 int Pie::Y()
 {
-  return mPosY;
+  return pieY;
 }
 
 int Pie::X()
 {
-  return mPosX;
+  return pieX;
 }

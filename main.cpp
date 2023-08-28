@@ -118,6 +118,11 @@ int main(int argc, char* args[])
 	{
 		bool quit = false;
 		SDL_Event e;
+    LTimer fpsTimer;
+    LTimer capTimer;
+
+    int countedFrames = 0;
+    fpsTimer.start();
 
 		if (!loadMedia())
 		{
@@ -125,10 +130,11 @@ int main(int argc, char* args[])
 			quit = true;
 		}
 
-    Pie pie;
+    Pie pie(120, 120);
 			
 		while(!quit)
 		{
+      capTimer.start();
 			while (SDL_PollEvent(&e) != 0)
 			{
 				if ( e.type == SDL_QUIT)
@@ -138,6 +144,12 @@ int main(int argc, char* args[])
         pie.handleEvent(e);
 		}
 
+      float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f );
+      if (avgFPS > 2000000)
+      {
+        avgFPS = 0;
+      }
+
       pie.move();
 
 			SDL_RenderClear(RENDERER);
@@ -146,8 +158,15 @@ int main(int argc, char* args[])
       PIE_TEXTURE.render(pie.X(), pie.Y(), RENDERER);
 
 			SDL_RenderPresent(RENDERER);
-		}
-	}
+      ++countedFrames;
+
+      int frameTicks = capTimer.getTicks();
+      if (frameTicks < SCREEN_TICKS_PER_FRAME)
+      {
+        SDL_Delay(SCREEN_TICKS_PER_FRAME - frameTicks);
+		  }
+	  }
+  }
 
 	close();
 
