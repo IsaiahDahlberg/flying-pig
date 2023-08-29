@@ -14,8 +14,8 @@ class Pie
 		static const int SCREEN_WIDTH = 320;
 		static const int SCREEN_HEIGHT = 240;
     static const int GRAVITY_VELOCITY = 1;
-    static const int GRAVITY_MAX_SPEED = 6;
-		static const int VEL = 5;
+    static const int GRAVITY_MAX_SPEED = 2;
+		static const int FLAP_THRUST = 12;
 
 		Pie(int x, int y);
 		void handleEvent( SDL_Event& e );
@@ -30,6 +30,7 @@ class Pie
 
 Pie::Pie(int x, int y)
 {
+    velY = 0;
     pieY = y;
 
     pieX = x;
@@ -38,10 +39,10 @@ Pie::Pie(int x, int y)
 void Pie::handleEvent( SDL_Event& e )
 {
 	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
-    {
+  {
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: velY -= VEL; break;
+            case SDLK_UP: velY -= FLAP_THRUST; break;
         }
     }
 }
@@ -55,9 +56,9 @@ void Pie::move()
 
   pieY += velY;
 
-  if( ( pieY < 0 ) || (pieY + HEIGHT > SCREEN_HEIGHT ) )
+  if( ( pieY + HEIGHT < 0 ) || (pieY > SCREEN_HEIGHT ) )
   {
-      pieY -= velY;
+    pieY -= velY;
   }
 }
 
