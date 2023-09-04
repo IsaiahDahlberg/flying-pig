@@ -21,6 +21,7 @@ SDL_Texture* CURRENT_TEXTURE = NULL;
 
 LTexture BACKGROUND_TEXTURE;
 LTexture PIE_TEXTURE;
+LTexture WALL_TEXTURE;
 
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
@@ -88,6 +89,12 @@ bool loadMedia()
     success = false;
   }
 
+  if (!WALL_TEXTURE.loadFromFile("assets/wall.png", RENDERER))
+  {
+    printf("Failed to load wall texture!\n");
+    success = false;
+  }
+
 	return success;
 }
 
@@ -95,6 +102,7 @@ void close()
 {
 	PIE_TEXTURE.free();
 	BACKGROUND_TEXTURE.free();
+	WALL_TEXTURE.free();
 
 	SDL_DestroyTexture(CURRENT_TEXTURE);
 
@@ -120,6 +128,7 @@ int main(int argc, char* args[])
 		SDL_Event e;
     LTimer fpsTimer;
     LTimer capTimer;
+    bool hit = false;
 
     int countedFrames = 0;
     fpsTimer.start();
@@ -141,6 +150,11 @@ int main(int argc, char* args[])
 				{
 					quit = true;
 				}
+	      if( e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_r)
+        {
+          hit = false;
+          pie.reset(120, 120);
+        }
         pie.handleEvent(e);
 		}
 
@@ -150,12 +164,21 @@ int main(int argc, char* args[])
         avgFPS = 0;
       }
 
-      pie.move();
+      if (!hit)
+      {
+        pie.move();
+      }
 
 			SDL_RenderClear(RENDERER);
 
       BACKGROUND_TEXTURE.render(0,0, RENDERER);
+      WALL_TEXTURE.render(180, 100, RENDERER);
+      WALL_TEXTURE.render(80,10, RENDERER);
       PIE_TEXTURE.render(pie.X(), pie.Y(), RENDERER);
+      if (pie.checkCollision(80, 10, 95, 48))
+      {
+        hit = true;
+      }
 
 			SDL_RenderPresent(RENDERER);
       ++countedFrames;

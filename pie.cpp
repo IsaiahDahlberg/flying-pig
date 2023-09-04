@@ -22,6 +22,8 @@ class Pie
 		void move();
     int Y();
     int X();
+    bool checkCollision(int wallX, int wallY, int wallH, int wallW);
+    void reset(int x, int y);
 
     private:
 		int pieX, pieY;
@@ -70,4 +72,34 @@ int Pie::Y()
 int Pie::X()
 {
   return pieX;
+}
+
+bool Pie::checkCollision(int wallX, int wallY, int wallH, int wallW)
+{
+    int leftPie, leftWall,
+        rightPie, rightWall,
+        topPie, topWall,
+        bottomPie, bottomWall;
+
+    leftPie = pieX;
+    rightPie = pieX + WIDTH;
+    topPie = pieY;
+    bottomPie = pieY + HEIGHT;
+
+    leftWall = wallX;
+    rightWall = wallX + wallW;
+    topWall = wallY;
+    bottomWall = wallY + wallH;
+
+    return !(bottomPie <= topWall ||
+      topPie >= bottomWall ||
+      rightPie <= leftWall ||
+      leftPie >= rightWall );
+}
+
+void Pie::reset(int x, int y)
+{
+  pieX = x;
+  pieY = y;
+  velY = 0;
 }
