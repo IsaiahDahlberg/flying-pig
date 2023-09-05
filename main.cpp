@@ -2,6 +2,7 @@
 #include <iostream>
 #include "LTexture.cpp"
 #include "pie.cpp"
+#include "wall.h"
 #include "LTimer.cpp"
 #include <stdlib.h>
 #include <SDL2/SDL.h>
@@ -74,8 +75,7 @@ bool init()
 
 bool loadMedia()
 {
-	//Loading success flag
-   	bool success = true;
+  bool success = true;
 
   if (!PIE_TEXTURE.loadFromFile("assets/pie.png", RENDERER))
   {
@@ -140,6 +140,15 @@ int main(int argc, char* args[])
 		}
 
     Pie pie(120, 120);
+    int len = 6;
+    Wall walls[] = { 
+      Wall(320, 170),
+      Wall(320, -30),
+      Wall(427, 150),
+      Wall(427, -50),
+      Wall(534, 190),
+      Wall(534, -60),
+    };
 			
 		while(!quit)
 		{
@@ -164,23 +173,35 @@ int main(int argc, char* args[])
         avgFPS = 0;
       }
 
+      for(int i = 0; i < len; i ++)
+      {
+        walls[i].move(); 
+        if (pie.checkCollision(walls[i].X(), walls[i].Y(), 95, 48))
+        {
+          hit = true;
+        }
+
+        if (walls[i].X() <= -30)
+        {
+          walls[i].move(330, walls[i].Y());
+        }
+      }
+
       if (!hit)
       {
         pie.move();
       }
 
 			SDL_RenderClear(RENDERER);
-
       BACKGROUND_TEXTURE.render(0,0, RENDERER);
-      WALL_TEXTURE.render(180, 100, RENDERER);
-      WALL_TEXTURE.render(80,10, RENDERER);
-      PIE_TEXTURE.render(pie.X(), pie.Y(), RENDERER);
-      if (pie.checkCollision(80, 10, 95, 48))
+
+      for(int i = 0; i < len; i++)
       {
-        hit = true;
+        WALL_TEXTURE.render(walls[i].X(), walls[i].Y(), RENDERER);
       }
 
-			SDL_RenderPresent(RENDERER);
+      PIE_TEXTURE.render(pie.X(), pie.Y(), RENDERER);
+ 			SDL_RenderPresent(RENDERER);
       ++countedFrames;
 
       int frameTicks = capTimer.getTicks();

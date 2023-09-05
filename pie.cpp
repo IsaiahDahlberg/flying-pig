@@ -10,7 +10,7 @@ class Pie
 {
     public:
 		static const int WIDTH = 32;
-		static const int HEIGHT = 32;
+		static const int HEIGHT = 12;
 		static const int SCREEN_WIDTH = 320;
 		static const int SCREEN_HEIGHT = 240;
     static const int GRAVITY_VELOCITY = 1;

@@ -14,12 +14,13 @@ class Wall
     static const int VEL = 1;
     Wall(int x, int y);
     void move();
+    void move(int x, int y);
     int Y();
     int X();
 
   private:
     int wallX, wallY;
-}
+};
 
 Wall::Wall(int x, int y)
 {
@@ -29,7 +30,13 @@ Wall::Wall(int x, int y)
 
 void Wall::move()
 {
-  wallY += VEL;
+  wallX -= VEL;
+}
+
+void Wall::move(int x, int y)
+{
+  wallX = x;
+  wallY = y;
 }
 
 int Wall::X()
