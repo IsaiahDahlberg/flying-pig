@@ -140,14 +140,12 @@ int main(int argc, char* args[])
 		}
 
     Pie pie(120, 120);
-    int len = 6;
+    int len = 4;
     Wall walls[] = { 
       Wall(320, 170),
       Wall(320, -30),
-      Wall(427, 150),
-      Wall(427, -50),
-      Wall(534, 190),
-      Wall(534, -60),
+      Wall(480, 190),
+      Wall(480, -60),
     };
 			
 		while(!quit)
@@ -173,17 +171,21 @@ int main(int argc, char* args[])
         avgFPS = 0;
       }
 
-      for(int i = 0; i < len; i ++)
+      for(int i = 0; i < len; i += 2)
       {
         walls[i].move(); 
-        if (pie.checkCollision(walls[i].X(), walls[i].Y(), 95, 48))
+        walls[i+1].move(); 
+        if (pie.checkCollision(walls[i].X(), walls[i].Y(), 95, 48) ||
+            pie.checkCollision(walls[i + 1].X(), walls[i + 1].Y(), 95, 48))
         {
           hit = true;
         }
 
         if (walls[i].X() <= -30)
         {
-          walls[i].move(330, walls[i].Y());
+          int wallY = rand() % 100 + 1;
+          walls[i].move(330, wallY-95);
+          walls[i + 1].move(330, wallY + 95);
         }
       }
 
