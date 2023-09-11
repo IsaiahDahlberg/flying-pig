@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 using namespace std;
 
@@ -147,7 +148,11 @@ int main(int argc, char* args[])
       Wall(480, 190),
       Wall(480, -60),
     };
-			
+	
+    SDL_Color textColor {0, 0, 0, 255};
+    std::stringstream timeText;		
+    LTimer timer;
+
 		while(!quit)
 		{
       capTimer.start();
@@ -161,6 +166,13 @@ int main(int argc, char* args[])
         {
           hit = false;
           pie.reset(120, 120);
+
+          if (timer.isStarted())
+          {
+            timer.stop();
+          }
+
+          timer.start();
         }
         pie.handleEvent(e);
 		}
@@ -193,6 +205,15 @@ int main(int argc, char* args[])
       {
         pie.move();
       }
+      else if (!timer.isPaused())
+      {
+        timer.pause();
+      }
+
+      timeText.str("");
+      timeText << (timer.getTicks() / 1000.f);
+
+      // WIP add text for timer
 
 			SDL_RenderClear(RENDERER);
       BACKGROUND_TEXTURE.render(0,0, RENDERER);
