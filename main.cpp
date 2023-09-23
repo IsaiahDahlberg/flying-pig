@@ -193,7 +193,7 @@ int main(int argc, char* args[])
           hit = true;
         }
 
-        if (walls[i].X() <= -30)
+        if (walls[i].X() <= -60)
         {
           int wallY = rand() % 100 + 1;
           walls[i].move(330, wallY-95);
