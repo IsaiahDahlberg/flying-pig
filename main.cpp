@@ -3,6 +3,7 @@
 #include "LTexture.cpp"
 #include "pie.cpp"
 #include "wall.h"
+#include "section.h"
 #include "LTimer.cpp"
 #include <stdlib.h>
 #include <SDL2/SDL.h>
@@ -29,6 +30,8 @@ const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
 const int SCREEN_FPS = 60;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
+
+int points = 0;
 
 bool init()
 {
@@ -141,18 +144,14 @@ int main(int argc, char* args[])
 		}
 
     Pie pie(120, 120);
-    int len = 4;
-    Wall walls[] = { 
-      Wall(320, 170),
-      Wall(320, -30),
-      Wall(480, 190),
-      Wall(480, -60),
+    int len = 2;
+    Section sections[] = { 
+      Section(320, 50),
+      Section(528, 90),
     };
 	
     SDL_Color textColor {0, 0, 0, 255};
     std::stringstream timeText;		
-    LTimer timer;
-
 		while(!quit)
 		{
       capTimer.start();
@@ -165,17 +164,13 @@ int main(int argc, char* args[])
 	      if( e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_r)
         {
           hit = false;
+          points = 0;
           pie.reset(120, 120);
-
-          if (timer.isStarted())
-          {
-            timer.stop();
-          }
-
-          timer.start();
+          sections[0] = Section(320, 50);
+          sections[1] = Section(528, 90);
         }
         pie.handleEvent(e);
-		}
+		  }
 
       float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f );
       if (avgFPS > 2000000)
@@ -183,21 +178,26 @@ int main(int argc, char* args[])
         avgFPS = 0;
       }
 
-      for(int i = 0; i < len; i += 2)
+      for(int i = 0; i < len; i += 1)
       {
-        walls[i].move(); 
-        walls[i+1].move(); 
-        if (pie.checkCollision(walls[i].X(), walls[i].Y(), 95, 48) ||
-            pie.checkCollision(walls[i + 1].X(), walls[i + 1].Y(), 95, 48))
+        if (hit == false)
         {
-          hit = true;
-        }
+          sections[i].advance(1); 
+          if (sections[i].checkCollision(pie.X(), pie.Y(), 12, 32))
+          {
+            hit = true;
+          }
 
-        if (walls[i].X() <= -60)
-        {
-          int wallY = rand() % 100 + 1;
-          walls[i].move(330, wallY-95);
-          walls[i + 1].move(330, wallY + 95);
+          if (sections[i].isPastPoint(-48))
+          {
+            sections[i].resetTo(320);
+          }
+
+          if (sections[i].isPointEligible() && sections[i].isPastPoint(pie.X() - 32))
+          {
+             sections[i].pointTaken();
+             points += 1;
+          }
         }
       }
 
@@ -205,22 +205,14 @@ int main(int argc, char* args[])
       {
         pie.move();
       }
-      else if (!timer.isPaused())
-      {
-        timer.pause();
-      }
-
-      timeText.str("");
-      timeText << (timer.getTicks() / 1000.f);
-
-      // WIP add text for timer
 
 			SDL_RenderClear(RENDERER);
       BACKGROUND_TEXTURE.render(0,0, RENDERER);
 
       for(int i = 0; i < len; i++)
       {
-        WALL_TEXTURE.render(walls[i].X(), walls[i].Y(), RENDERER);
+        WALL_TEXTURE.render(sections[i].top().X(), sections[i].top().Y(), RENDERER);
+        WALL_TEXTURE.render(sections[i].bot().X(), sections[i].bot().Y(), RENDERER);
       }
 
       PIE_TEXTURE.render(pie.X(), pie.Y(), RENDERER);
