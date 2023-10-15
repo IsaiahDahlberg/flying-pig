@@ -14,8 +14,8 @@ class Pie
 		static const int SCREEN_WIDTH = 320;
 		static const int SCREEN_HEIGHT = 240;
     static const int GRAVITY_VELOCITY = 1;
-    static const int GRAVITY_MAX_SPEED = 2;
-		static const int FLAP_THRUST = 12;
+    static const int GRAVITY_MAX_SPEED = 3;
+		static const int FLAP_THRUST = -8;
 
 		Pie(int x, int y);
 		void handleEvent( SDL_Event& e );
@@ -44,7 +44,16 @@ void Pie::handleEvent( SDL_Event& e )
   {
         switch( e.key.keysym.sym )
         {
-            case SDLK_UP: velY -= FLAP_THRUST; break;
+            case SDLK_UP:
+              if (velY > FLAP_THRUST)
+              {
+                velY += FLAP_THRUST; 
+                if (velY > FLAP_THRUST)
+                {
+                  velY = FLAP_THRUST;
+                }
+              }
+              break;
         }
     }
 }
@@ -58,10 +67,13 @@ void Pie::move()
 
   pieY += velY;
 
-  if( ( pieY + HEIGHT < 0 ) || (pieY > SCREEN_HEIGHT ) )
+  if( ( pieY + HEIGHT < 0 ) || (pieY + HEIGHT > SCREEN_HEIGHT ) )
   {
     pieY -= velY;
+    velY = 0;
   }
+
+  printf("VelY: %d\n", velY);
 }
 
 int Pie::Y()
@@ -84,7 +96,7 @@ bool Pie::checkCollision(int wallX, int wallY, int wallH, int wallW)
     leftPie = pieX;
     rightPie = pieX + WIDTH;
     topPie = pieY;
-    bottomPie = pieY + HEIGHT;
+    bottomPie = pieY - HEIGHT;
 
     leftWall = wallX;
     rightWall = wallX + wallW;
