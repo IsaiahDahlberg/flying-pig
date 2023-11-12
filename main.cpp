@@ -81,19 +81,19 @@ bool loadMedia()
 {
   bool success = true;
 
-  if (!PIE_TEXTURE.loadFromFile("assets/pie.png", RENDERER))
+  if (!PIE_TEXTURE.loadFromFile("./assets/pie.png", RENDERER))
   {
     printf("Failed to load pie texture!\n");
     success = false;
   }
 
-  if (!BACKGROUND_TEXTURE.loadFromFile("assets/background.png", RENDERER))
+  if (!BACKGROUND_TEXTURE.loadFromFile("./assets/background.png", RENDERER))
   {
     printf("Failed to load pie texture!\n");
     success = false;
   }
 
-  if (!WALL_TEXTURE.loadFromFile("assets/wall.png", RENDERER))
+  if (!WALL_TEXTURE.loadFromFile("./assets/wall.png", RENDERER))
   {
     printf("Failed to load wall texture!\n");
     success = false;
