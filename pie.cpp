@@ -42,20 +42,15 @@ void Pie::handleEvent( SDL_Event& e )
 {
 	if( e.type == SDL_KEYDOWN && e.key.repeat == 0 )
   {
-        switch( e.key.keysym.sym )
-        {
-            case SDLK_UP:
-              if (velY > FLAP_THRUST)
-              {
-                velY += FLAP_THRUST; 
-                if (velY > FLAP_THRUST)
-                {
-                  velY = FLAP_THRUST;
-                }
-              }
-              break;
-        }
+    if (velY > FLAP_THRUST)
+    {
+      velY += FLAP_THRUST; 
+      if (velY > FLAP_THRUST)
+      {
+        velY = FLAP_THRUST;
+      }
     }
+  }
 }
 
 void Pie::move()

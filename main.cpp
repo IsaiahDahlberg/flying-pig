@@ -133,6 +133,8 @@ int main(int argc, char* args[])
     LTimer fpsTimer;
     LTimer capTimer;
     bool hit = false;
+    int hitAtTicks = 0;
+    bool pause = true;
 
     int countedFrames = 0;
     fpsTimer.start();
@@ -161,13 +163,19 @@ int main(int argc, char* args[])
 				{
 					quit = true;
 				}
-	      if( e.type == SDL_KEYDOWN && e.key.repeat == 0 && e.key.keysym.sym == SDLK_r)
+	      if( e.type == SDL_KEYDOWN && e.key.repeat == 0)
         {
-          hit = false;
-          points = 0;
-          pie.reset(120, 120);
-          sections[0] = Section(320, 50);
-          sections[1] = Section(528, 90);
+          if (hit == true)
+          {
+            if (hitAtTicks + 1000 < fpsTimer.getTicks())
+            {
+              hit = false;
+              points = 0;
+              pie.reset(120, 120);
+              sections[0] = Section(320, 50);
+              sections[1] = Section(528, 90);
+            }
+          }
         }
         pie.handleEvent(e);
 		  }
@@ -186,6 +194,7 @@ int main(int argc, char* args[])
           if (sections[i].checkCollision(pie.X(), pie.Y(), 12, 32))
           {
             hit = true;
+            hitAtTicks = fpsTimer.getTicks();
           }
 
           if (sections[i].isPastPoint(-48))
